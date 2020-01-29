@@ -1,0 +1,45 @@
+body{   background: url(../background.jpg) no-repeat;
+           background-size: cover;
+           font-size:20px;
+}
+h1 {padding: 100px 0; font-weight: 400; text-align: center;}
+p {margin: 0 0 20px; line-height: 1.5;}
+
+.main {margin: 0 auto; min-width: 320px; max-width: 100%;text-align:left;}
+.content { border-left: 1px solid gray;
+           border-top: 1px solid gray;
+           border-bottom: 1px solid gray;
+           border-right: 1px solid gray;
+           padding: 10px;
+           text-align:left;}
+.content > div {display: none; padding: 20px 25px 5px;}
+
+input {display: none;}
+label {  display: inline-block;
+         padding: 5px 60px;
+         font-weight: 600;
+         color: gray;
+         text-align: center;
+         border-left: 1px solid gray;
+         border-right: 1px solid gray;
+         border-top: 1px solid gray;
+         border-top-left-radius: 3px;border-top-right-radius: 3px;
+         }
+input:checked + label {background: silver; color: #000;}
+
+#tab1:checked ~ .content #content1 {
+display: block;
+}
+
+#inputdata table {
+    border-collapse: collapse;
+    border-style: hidden;
+}
+#inputdata td {
+    border: 1px solid gray;
+}
+
+
+@media screen and (max-width: 400px) { label {padding: 15px 10px;} }
+
+

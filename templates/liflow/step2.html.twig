@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>LiFlow v3</title>
+        {% block stylesheets %}
+            <link rel="stylesheet" href="{{ asset('styles.css') }}" />
+        {% endblock %}
+    </head>
+
+    <body>
+    <div class="main">
+
+	<input id="tab1" type="radio" name="tabs" disabled>
+	<label for="tab1">Step 1</label>
+
+        <input id="tab2" type="radio" name="tabs" checked>
+	<label for="tab2">Step 2</label>
+
+	<input id="tab3" type="radio" name="tabs" disabled>
+	<label for="tab3">Step 3</label>
+
+	<input id="tab4" type="radio" name="tabs" disabled>
+	<label for="tab4">Step 4</label>
+
+	<div class="content">
+        <form action="step3.php?tmpDirName=<?php echo htmlspecialchars($target_dir) ?>" method="post" enctype="multipart/form-data">
+            <table id="inputdata", width="100%">
+            <col width="50%">
+            <tr>
+                <th align="left">Configuration file.</th>
+                <th align="left">Launch options.</th>
+            </tr>
+            <tr>
+                <td>
+                <p>
+                Insert the parameters in the form of a standart configuration file. Use space as a separator.<br>
+                You can set a range of values incrementally using construction like: <b>initial...increment...final. </b><br>
+                To automatically add parameters to description, use <b>&</b> at the end of the corresponding line.<br>
+                </p>
+                <textarea class="FormElement" name="conf_file" id="conf_file" cols="40" rows="20" style="font-size: 20px;"><?php echo htmlspecialchars($data) ?></textarea><br><br>
+                </td>
+                
+                <td>
+                </td>
+            </tr>
+            </table>
+        </form>
+        </div>
+    </div>
+    </body>
+
+</html>

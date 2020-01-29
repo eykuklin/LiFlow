@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>LiFlow v3</title>
+        {% block stylesheets %}
+            <link rel="stylesheet" href="{{ asset('styles.css') }}" />
+        {% endblock %}
+    </head>
+
+    <body>
+    <div class="main">
+
+	<input id="tab1" type="radio" name="tabs" checked>
+	<label for="tab1">Step 1</label>
+
+        <input id="tab2" type="radio" name="tabs" disabled>
+	<label for="tab2">Step 2</label>
+
+	<input id="tab3" type="radio" name="tabs" disabled>
+	<label for="tab3">Step 3</label>
+
+	<input id="tab4" type="radio" name="tabs" disabled>
+	<label for="tab4">Step 4</label>
+
+	<div class="content">
+	    <h2>Welcome to LiFlow!</h2>
+	    <p>
+	    Let's do some science. <br>
+	    Your lucky number for today: {{ rand }} <br>
+	    <a href="liflow/step2?tmpDirName={{ rand }}&sourceDirName=_default">Press here to begin a new project.</a>
+	    <br>Or, select the recent experiment for re-run:<br>
+	    </p>
+
+            <table class="table", border='1', bgcolor='white'>
+            <thead>
+                <tr align="center">
+                    <th> </th>
+                    <th>Cluster</th>
+                    <th>Id</th>
+                    <th>Date</th>
+                    <th>User</th>
+                    <th>Description</th>
+                    <th>Home directory</th>
+                    <th>Path to the binary</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for rows in experiments %}
+                <tr>
+                    <td>Select</td>
+                    <td>{{ rows.cluster }}</td>
+                    <td>{{ rows.targetdir }}</td>
+                    <td>{{ rows.date|date('Y-m-d') }}</td>
+                    <td>{{ rows.userid }}</td>
+                    <td>{{ rows.description }}</td>
+                    <td>{{ rows.homedir }}</td>
+                    <td>{{ rows.binarypath }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="3">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+            </table>
+	    
+	</div>
+    </div>
+    </body>
+
+</html>
