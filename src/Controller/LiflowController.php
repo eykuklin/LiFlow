@@ -5,9 +5,11 @@ namespace App\Controller;
 
 use App\Entity\Page;
 use App\Entity\Liflowweb;
+use App\Form\FormType;
 use App\Services\TestService;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -33,15 +35,60 @@ class LiflowController extends AbstractController
     }
 
     /**
-    * @Route("/liflow/step2")
+    * @Route("/liflow/step4")
     */
 
-    public function step2()
+    public function step4()
     {
         return $this->render('liflow/step2.html.twig', [
         
         ]);
     }                                            
+
+    /**
+    * @Route("/liflow/step2")
+    */
+
+    public function step2(Request $request)
+    {
+        $form = $this->createForm(FormType::class       , ['action' => $this->generateUrl('step3'), 'method' => 'POST',] );
+        $form->handleRequest($request);
+        
+        $target_dir = substr(md5(microtime()),rand(0,26),8);    //получаем имя временного каталога
+        $source_dir = $request->query->get('sourceDirName');    //получаем имя каталога-источника из командной строки
+        
+        $data = file_get_contents("uploads/$source_dir/input.txt");    //значения конф. файла по умолчанию
+        
+        if($form->isSubmitted() && $form->isValid())
+        {
+            $data = $form->getData();
+        //    dump($data['user']);
+        //    die();
+        //return $this->redirectToRoute('step3');
+        }
+        
+        
+        
+        return $this->render('liflow/step2.html.twig', [
+        'form' => $form->createView(),
+        'tmp' => $tmp
+        ]);
+    }
+
+    /**
+    * @Route("/liflow/step3", name="step3")
+    */
+    
+    public function step3()
+    {
+        $request = Request::createFromGlobals();
+        $mydesc = $request->request->get('description');
+    
+        return $this->render('liflow/step3.html.twig', [
+        'mydesc' => $mydesc
+        ]);
+    }
+    
 
     /**
     * @Route("/liflow/add-data")

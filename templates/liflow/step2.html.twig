@@ -9,21 +9,31 @@
 
     <body>
     <div class="main">
-
+        <span class="label tabs">
 	<input id="tab1" type="radio" name="tabs" disabled>
-	<label for="tab1">Step 1</label>
-
+	<label for="tab1"><a href="/liflow">Step 1</a></label>
+	</span>
+	
+        <span class="label tabs">
         <input id="tab2" type="radio" name="tabs" checked>
 	<label for="tab2">Step 2</label>
-
+	</span>
+	
+        <span class="label tabs">
 	<input id="tab3" type="radio" name="tabs" disabled>
 	<label for="tab3">Step 3</label>
-
+	</span>
+	
+        <span class="label tabs">
 	<input id="tab4" type="radio" name="tabs" disabled>
 	<label for="tab4">Step 4</label>
-
+        </span>
+	
 	<div class="content">
-        <form action="step3.php?tmpDirName=<?php echo htmlspecialchars($target_dir) ?>" method="post" enctype="multipart/form-data">
+	
+	{{ tmp }}
+	
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}, {'action': path('step3'), 'method': 'POST'}) }}
             <table id="inputdata", width="100%">
             <col width="50%">
             <tr>
@@ -31,20 +41,52 @@
                 <th align="left">Launch options.</th>
             </tr>
             <tr>
-                <td>
-                <p>
-                Insert the parameters in the form of a standart configuration file. Use space as a separator.<br>
-                You can set a range of values incrementally using construction like: <b>initial...increment...final. </b><br>
-                To automatically add parameters to description, use <b>&</b> at the end of the corresponding line.<br>
-                </p>
-                <textarea class="FormElement" name="conf_file" id="conf_file" cols="40" rows="20" style="font-size: 20px;"><?php echo htmlspecialchars($data) ?></textarea><br><br>
+                <td valign="top">
+                    <p>
+                    Insert the parameters in the form of a standart configuration file. Use space as a separator.<br>
+                    You can set a range of values incrementally using construction like: <b>initial...increment...final.</b><br>
+                    To automatically add parameters to description, use <b>&</b> at the end of the corresponding line.<br
+                    </p>
+                    <br>                                                                            
+                    {{ form_widget(form.conf_file, {'attr': { 
+                    'style' : 'font-size:20px', 
+                    'rows' : '20', 
+                    'cols' : '40' } } ) }}
                 </td>
-                
-                <td>
+                <td valign="top">
+                    <p>Provide the additional information.</p>
+                    <br><br>
+                    Specify the binary file with the full path to it (default: ~/bin/LVD):
+                    <br>
+                    {{ form_widget(form.binary_path, {'attr': {'size' : 80} }) }}            
+                    <br><br>
+                    Edit the SLURM run command:
+                    <br>
+                    {{ form_widget(form.runme, {'attr': {'size' : 80} }) }}
+                    <br><br>
+                    Specify the working directory in /home/user (without ~):
+                    <br>
+                    {{ form_widget(form.workdir, {'attr': {'size' : 80} }) }}
+                    <br><br>
+                    Optional: provide a template name for experiment directories (no spaces):
+                    <br>
+                    {{ form_widget(form.template_name, {'attr': {'size' : 80} }) }}
+                    <br><br>
+                    Add a description if necessary:
+                    <br>
+                    {{ form_widget(form.description, {'attr': {'size' : 80} }) }}                                                  
+                    <br><br>
+                    Enter your credentials:
+                    <br>
+                    User: {{ form_widget(form.user, {'attr': {'size' : 5} }) }}
+                    Password: {{ form_widget(form.password, {'attr': {'size' : 20} }) }}
+                    <br><br>
+                    <button type="submit" class="button">Submit</button>                                    
                 </td>
             </tr>
             </table>
-        </form>
+        {{ form_end(form) }}
+        
         </div>
     </div>
     </body>

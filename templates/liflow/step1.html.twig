@@ -9,24 +9,31 @@
 
     <body>
     <div class="main">
-
+        <span class="label tabs">
 	<input id="tab1" type="radio" name="tabs" checked>
 	<label for="tab1">Step 1</label>
+        </span>
 
+        <span class="label tabs">
         <input id="tab2" type="radio" name="tabs" disabled>
 	<label for="tab2">Step 2</label>
+	</span>
 
+        <span class="label tabs">
 	<input id="tab3" type="radio" name="tabs" disabled>
 	<label for="tab3">Step 3</label>
-
-	<input id="tab4" type="radio" name="tabs" disabled>
+	</span>
+        
+        <span class="label tabs">
+        <input id="tab4" type="radio" name="tabs" disabled>
 	<label for="tab4">Step 4</label>
+	</span>
 
 	<div class="content">
 	    <h2>Welcome to LiFlow!</h2>
 	    <p>
 	    Let's do some science. <br>
-	    Your lucky number for today: {{ rand }} <br>
+	    Your lucky number for today: {{ rand }}
 	    <a href="liflow/step2?tmpDirName={{ rand }}&sourceDirName=_default">Press here to begin a new project.</a>
 	    <br>Or, select the recent experiment for re-run:<br>
 	    </p>
