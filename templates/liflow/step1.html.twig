@@ -33,8 +33,8 @@
 	    <h2>Welcome to LiFlow!</h2>
 	    <p>
 	    Let's do some science. <br>
-	    Your lucky number for today: {{ rand }}
-	    <a href="liflow/step2?tmpDirName={{ rand }}&sourceDirName=_default">Press here to begin a new project.</a>
+	    Your lucky number for today: {{ rand }} <br>
+	    <a href="liflow/step2/_default">Press here to begin a new project.</a>
 	    <br>Or, select the recent experiment for re-run:<br>
 	    </p>
 
@@ -54,7 +54,7 @@
             <tbody>
             {% for rows in experiments %}
                 <tr>
-                    <td>Select</td>
+                    <td><a href="liflow/step2/{{ rows.targetdir }}">Select</a></td>
                     <td>{{ rows.cluster }}</td>
                     <td>{{ rows.targetdir }}</td>
                     <td>{{ rows.date|date('Y-m-d') }}</td>

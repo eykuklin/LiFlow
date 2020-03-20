@@ -31,7 +31,7 @@
 	
 	<div class="content">
 	
-	{{ tmp }}
+	
 	
         {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}, {'action': path('step3'), 'method': 'POST'}) }}
             <table id="inputdata", width="100%">
@@ -42,6 +42,7 @@
             </tr>
             <tr>
                 <td valign="top">
+                    <div class="content2">
                     <p>
                     Insert the parameters in the form of a standart configuration file. Use space as a separator.<br>
                     You can set a range of values incrementally using construction like: <b>initial...increment...final.</b><br>
@@ -52,8 +53,10 @@
                     'style' : 'font-size:20px', 
                     'rows' : '20', 
                     'cols' : '40' } } ) }}
+                    </div>
                 </td>
                 <td valign="top">
+                    <div class="content2">
                     <p>Provide the additional information.</p>
                     <br><br>
                     Specify the binary file with the full path to it (default: ~/bin/LVD):
@@ -81,7 +84,8 @@
                     User: {{ form_widget(form.user, {'attr': {'size' : 5} }) }}
                     Password: {{ form_widget(form.password, {'attr': {'size' : 20} }) }}
                     <br><br>
-                    <button type="submit" class="button">Submit</button>                                    
+                    <button type="submit" class="button">Submit</button>  
+                    </div>                                 
                 </td>
             </tr>
             </table>

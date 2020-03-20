@@ -11,8 +11,14 @@ p {margin: 0 0 20px; line-height: 1.5;}
            border-bottom: 1px solid gray;
            border-right: 1px solid gray;
            padding: 10px;
-           text-align:left;}
+           text-align:left;
+         }
 .content > div {display: none; padding: 20px 25px 5px;}
+
+.content2 { text-align:left;
+            padding: 10px;
+          }
+                                                       
 
 input[type=radio] {display: none;}
 .label {  text-align: center; }
