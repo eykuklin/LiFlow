@@ -52,8 +52,6 @@ class LiflowController extends AbstractController
 
     public function step2(Request $request, EntityManagerInterface $em, LiFlowServices $service, string $exp_id)
     {
-        $target_dir = substr(md5(microtime()),rand(0,26),8);    //получаем имя временного каталога
-        //$source_dir = $service->test_input( $request->query->get('sourceDirName') );  //получаем имя каталога-источника из командной строки
         $source_dir = $service->test_input( $exp_id );
                     
             //Read the database to find settings
@@ -71,25 +69,27 @@ class LiflowController extends AbstractController
             //More settings
         $conf_file = file_get_contents("../uploads/$source_dir/input.txt");    //значения конф. файла по умолчанию
         $form->get('conf_file')->setData($conf_file);
-        $lines = file("../uploads/$source_dir/runme.sh");    //вытащим строку запуска для slurm, поскольку в базу данных ее записать проблематично
-        $form->get('runme')->setData(trim($lines[5]));
-        $form->get('exp_id')->setData( $source_dir );        //hidden field
+            //For compatibility with old experiments, we will check the slurmcommand field for emptiness
+        if (empty($experiment->getSlurmcommand()))
+        {
+            $lines = file("../uploads/$source_dir/runme.sh");    //вытащим строку запуска для slurm
+            $form->get('runme')->setData(trim($lines[5]));
+        }
+        else $form->get('runme')->setData($experiment->getSlurmcommand());
         
         $form->handleRequest($request);
-        
         if($form->isSubmitted() && $form->isValid())
         {
             //$form_data = $form->getData();
             //dd($form_data['user']);
+            
+            //Check the passwd here
             return $this->redirectToRoute('step3', [ 'request' => $request ], 307);
             //return $this->redirectToRoute('step3', ['query' => $source_dir], [ 'request' => $request ], 307);         //307 saves POST method instead of transforming it to GET
         }
-        
-        
-        
+                
         return $this->render('liflow/step2.html.twig', [
         'form' => $form->createView(),
-        /*'res' => $res,*/
         ]);
     }
 
@@ -97,24 +97,50 @@ class LiflowController extends AbstractController
     * @Route("/liflow/step3", name="step3", methods="POST")
     */
     
-    public function step3(Request $request)
+    public function step3(Request $request, EntityManagerInterface $em, LiFlowServices $service)
     {
+        //$target_dir = substr(md5(microtime()),rand(0,26),8);    //имя временного каталога
+        
         $form_data = $request->request->get('form');            //Получаем параметры из предыдущей формы
 
+        //TODO: сделать класс для настроек
+        $my_conf_file = $form_data['conf_file'];
         $my_description = $form_data['description'];
-        $my_binaryPath = $form_data['binary_path'];
-        $my_workDir = $form_data['workdir'];
+        $my_binary_path = $form_data['binary_path'];
+        $my_workdir = $form_data['workdir'];
         $my_runme = $form_data['runme'];
         $my_templatename = $form_data['template_name'];
         $my_description = $form_data['description'];
         $my_user = $form_data['user'];
         $my_passwd = $form_data['password'];
         //$my_cluster = $form_data['cluster'];
-        dd($form_data);
+        //dd($form_data);
+        $my_description = $service->create_description($my_description, $my_conf_file);  //добавим отмеченные строчки к описанию
         
-    
+            //Insert into database
+        $experiment = new Liflowweb();
+        $experiment->setDate();
+        $experiment->setUserid("$my_user");
+        $experiment->setCluster('imm');
+        $experiment->setDescription("$my_description");
+        $experiment->setHomedir("$my_workdir");
+        $experiment->setTargetdir('temp');
+        $experiment->setBinarypath("$my_binary_path");
+        $experiment->setTemplatename("$my_templatename");
+        $experiment->setSlurmcommand("$my_runme");
+        $em->persist($experiment);
+        $em->flush();
+            //Retrieve experiment ID            
+        $target_dir = "id_" . $experiment->getId();
+        $experiment->setTargetdir("$target_dir");
+        $em->persist($experiment);
+        $em->flush();
+            
+            //Save data on disk
+        $service->save_data("$target_dir", "$my_conf_file", "$my_runme", "$my_description");
+        
+        
         return $this->render('liflow/step3.html.twig', [
-        'mydesc' => $mydesc
         ]);
     }
     
@@ -152,18 +178,5 @@ class LiflowController extends AbstractController
     }                                                
             
             
-    //public function index(LoggerInterface $logger)
-    public function index(TestService $service)
-    {
-            
-        //$logger->info('Test log');
-        $var1 = $service->convert(1000);
-        
-        return $this->render('liflow/step1.html.twig', [
-            'var1' => $var1,
-        ]);
-    }
-
-
 }
 ?>
