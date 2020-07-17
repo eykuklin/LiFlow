@@ -63,15 +63,19 @@
                     <br>
                     {{ form_widget(form.binary_path, {'attr': {'size' : 80} }) }}            
                     <br><br>
-                    Edit the SLURM run command:
+                    Add the SLURM options:
                     <br>
-                    {{ form_widget(form.runme, {'attr': {'size' : 80} }) }}
+                    {{ form_widget(form.options, {'attr': {'size' : 80} }) }}
+                    <br><br>
+                    Place your code to be run:
+                    <br>
+                    {{ form_widget(form.code, {'attr': {'size' : 80} }) }}
                     <br><br>
                     Specify the working directory in /home/user (without ~):
                     <br>
                     {{ form_widget(form.workdir, {'attr': {'size' : 80} }) }}
                     <br><br>
-                    Optional: provide a template name for experiment directories (no spaces):
+                    Optional - provide a template name for experiment directories (no spaces):
                     <br>
                     {{ form_widget(form.template_name, {'attr': {'size' : 80} }) }}
                     <br><br>

@@ -35,16 +35,6 @@ class LiflowController extends AbstractController
         ]);
     }
 
-    /**
-    * @Route("/liflow/step4")
-    */
-
-    public function step4()
-    {
-        return $this->render('liflow/step2.html.twig', [
-        
-        ]);
-    }                                            
 
     /**
     * @Route("/liflow/step2/{exp_id}", name="step2")
@@ -69,13 +59,15 @@ class LiflowController extends AbstractController
             //More settings
         $conf_file = file_get_contents("../uploads/$source_dir/input.txt");    //значения конф. файла по умолчанию
         $form->get('conf_file')->setData($conf_file);
+        $form->get('code')->setData($experiment->getRuncode());
             //For compatibility with old experiments, we will check the slurmcommand field for emptiness
         if (empty($experiment->getSlurmcommand()))
         {
             $lines = file("../uploads/$source_dir/runme.sh");    //вытащим строку запуска для slurm
-            $form->get('runme')->setData(trim($lines[5]));
+            $form->get('options')->setData(trim($lines[5]));
         }
-        else $form->get('runme')->setData($experiment->getSlurmcommand());
+        else $form->get('options')->setData($experiment->getSlurmcommand());
+        
         
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid())
@@ -83,7 +75,21 @@ class LiflowController extends AbstractController
             //$form_data = $form->getData();
             //dd($form_data['user']);
             
-            //Check the passwd here
+            //Check the passwd
+            $my_user = $form->get('user');
+            $my_passwd = $form->get('password');
+            $command = 'sshpass -p "' . $my_passwd . '" ssh -o StrictHostKeyChecking=no ' . $my_user . '@umt.imm.uran.ru "/usr/bin/hostname"';
+            exec($command, $arr);
+            //if ($arr[0] != "umt.imm.uran.ru")
+            if (1)
+            {
+                echo "<b>Wrong IMM login/password!</b> Return to the previous page and try again.";
+                return $this->render('liflow/step2.html.twig', [
+                ]);
+                            
+            }
+                                    
+            
             return $this->redirectToRoute('step3', [ 'request' => $request ], 307);
             //return $this->redirectToRoute('step3', ['query' => $source_dir], [ 'request' => $request ], 307);         //307 saves POST method instead of transforming it to GET
         }
@@ -108,12 +114,14 @@ class LiflowController extends AbstractController
         $my_description = $form_data['description'];
         $my_binary_path = $form_data['binary_path'];
         $my_workdir = $form_data['workdir'];
-        $my_runme = $form_data['runme'];
+        $my_options = $form_data['options'];
+        $my_code = $form_data['code'];
+        //$my_runme = $form_data['runme'];
+        //$my_cluster = $form_data['cluster'];
         $my_templatename = $form_data['template_name'];
         $my_description = $form_data['description'];
         $my_user = $form_data['user'];
         $my_passwd = $form_data['password'];
-        //$my_cluster = $form_data['cluster'];
         //dd($form_data);
         $my_description = $service->create_description($my_description, $my_conf_file);  //добавим отмеченные строчки к описанию
         
@@ -127,7 +135,8 @@ class LiflowController extends AbstractController
         $experiment->setTargetdir('temp');
         $experiment->setBinarypath("$my_binary_path");
         $experiment->setTemplatename("$my_templatename");
-        $experiment->setSlurmcommand("$my_runme");
+        $experiment->setSlurmcommand("$my_options");
+        $experiment->setRuncode("$my_code");
         $em->persist($experiment);
         $em->flush();
             //Retrieve experiment ID            
@@ -137,13 +146,27 @@ class LiflowController extends AbstractController
         $em->flush();
             
             //Save data on disk
-        $service->save_data("$target_dir", "$my_conf_file", "$my_runme", "$my_description");
+        $service->save_data("$target_dir", "$my_conf_file", "$my_options", "$my_code", "$my_description");
         
         
-        return $this->render('liflow/step3.html.twig', [
-        ]);
+        //return $this->render('liflow/step3.html.twig', [
+        //]);
+        return $this->redirectToRoute('step4');
     }
     
+
+    /**
+    * @Route("/liflow/step4")
+    */
+            
+    public function step4()
+    {
+        return $this->render('liflow/step2.html.twig', [
+    
+        ]);
+    }
+                            
+
 
     /**
     * @Route("/liflow/add-data")

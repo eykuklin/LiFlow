@@ -62,6 +62,12 @@ class Liflowweb
     private $slurmcommand;
 
     /**
+    * @ORM\Column(type="string", length=255, nullable=true)
+    */
+    private $runcode;
+                      
+
+    /**
      * @ORM\Column(type="integer", nullable=true)
      */
     private $jobid;
@@ -179,6 +185,18 @@ class Liflowweb
         $this->slurmcommand = $slurmcommand;
 
         return $this;
+    }
+    
+    public function getRuncode(): ?string
+    {
+        return $this->runcode;
+    }
+    
+    public function setRuncode(?string $runcode): self
+    {
+        $this->runcode = $runcode;
+     
+        return $this;    
     }
 
     public function getJobid(): ?int
