@@ -58,36 +58,59 @@
                 <td valign="top">
                     <div class="content2">
                     <p>Provide the additional information.</p>
-                    <br><br>
+                    <br>
                     Specify the binary file with the full path to it (default: ~/bin/LVD):
                     <br>
-                    {{ form_widget(form.binary_path, {'attr': {'size' : 80} }) }}            
-                    <br><br>
+                    <div>
+                    {{ form_widget(form.binary_path, {'attr': {'size' : 80} }) }}
+                    {{ form_errors(form.binary_path) }}
+                    </div>   
+                    <br>
                     Add the SLURM options:
                     <br>
+                    <div>
                     {{ form_widget(form.options, {'attr': {'size' : 80} }) }}
-                    <br><br>
+                    </div>
+                    <br>
                     Place your code to be run:
                     <br>
+                    <div>
                     {{ form_widget(form.code, {'attr': {'size' : 80} }) }}
-                    <br><br>
+                    {{ form_errors(form.code) }}
+                    </div>
+                    <br>
                     Specify the working directory in /home/user (without ~):
                     <br>
+                    <div>
                     {{ form_widget(form.workdir, {'attr': {'size' : 80} }) }}
-                    <br><br>
+                    {{ form_errors(form.workdir) }}
+                    </div>
+                    <br>
                     Optional - provide a template name for experiment directories (no spaces):
                     <br>
+                    <div>
                     {{ form_widget(form.template_name, {'attr': {'size' : 80} }) }}
-                    <br><br>
+                    </div>
+                    <br>
                     Add a description if necessary:
                     <br>
-                    {{ form_widget(form.description, {'attr': {'size' : 80} }) }}                                                  
-                    <br><br>
+                    <div>
+                    {{ form_widget(form.description, {'attr': {'size' : 80} }) }}  
+                    </div>                                                
+                    <br>
                     Enter your credentials:
                     <br>
+                    <div>
                     User: {{ form_widget(form.user, {'attr': {'size' : 5} }) }}
+                          {{ form_errors(form.user) }}
                     Password: {{ form_widget(form.password, {'attr': {'size' : 20} }) }}
+                              {{ form_errors(form.password) }}
                     <br><br>
+                    </div>
+                    <div>
+                    {{ message }}
+                    </div>
+                    <br>
                     <button type="submit" class="button">Submit</button>  
                     </div>                                 
                 </td>

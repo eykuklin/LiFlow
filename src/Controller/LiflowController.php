@@ -72,30 +72,36 @@ class LiflowController extends AbstractController
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid())
         {
-            //$form_data = $form->getData();
-            //dd($form_data['user']);
-            
             //Check the passwd
-            $my_user = $form->get('user');
-            $my_passwd = $form->get('password');
+            $form_data = $form->getData();
+            $my_user = $form_data['user'];
+            $my_passwd = $form_data['password'];
+            //dd($form_data['user']);
             $command = 'sshpass -p "' . $my_passwd . '" ssh -o StrictHostKeyChecking=no ' . $my_user . '@umt.imm.uran.ru "/usr/bin/hostname"';
+            //$command = "pwd";
             exec($command, $arr);
-            //if ($arr[0] != "umt.imm.uran.ru")
-            if (1)
+            //dd($arr);
+            //dd$command);
+            if (empty($arr))
             {
-                echo "<b>Wrong IMM login/password!</b> Return to the previous page and try again.";
                 return $this->render('liflow/step2.html.twig', [
-                ]);
-                            
+                'form' => $form->createView(), 'message' => "Wrong IMM login/password!",
+                ]);            
             }
-                                    
-            
-            return $this->redirectToRoute('step3', [ 'request' => $request ], 307);
-            //return $this->redirectToRoute('step3', ['query' => $source_dir], [ 'request' => $request ], 307);         //307 saves POST method instead of transforming it to GET
+            else                      
+            {
+                if ($arr[0] == "umt.imm.uran.ru")
+                    return $this->redirectToRoute('step3', [ 'request' => $request ], 307);             //307 saves POST method instead of transforming it to GET
+                    //return $this->redirectToRoute('step3', ['query' => $source_dir], [ 'request' => $request ], 307);    
+                else 
+                    return $this->render('liflow/step2.html.twig', [
+                    'form' => $form->createView(), 'message' => "Wrong IMM login/password!",
+                    ]);                    
+            }
         }
                 
         return $this->render('liflow/step2.html.twig', [
-        'form' => $form->createView(),
+        'form' => $form->createView(), 'message' => "",
         ]);
     }
 
@@ -148,6 +154,8 @@ class LiflowController extends AbstractController
             //Save data on disk
         $service->save_data("$target_dir", "$my_conf_file", "$my_options", "$my_code", "$my_description");
         
+            //
+        
         
         //return $this->render('liflow/step3.html.twig', [
         //]);
@@ -156,12 +164,12 @@ class LiflowController extends AbstractController
     
 
     /**
-    * @Route("/liflow/step4")
+    * @Route("/liflow/step4", name="step4")
     */
             
     public function step4()
     {
-        return $this->render('liflow/step2.html.twig', [
+        return $this->render('liflow/step4.html.twig', [
     
         ]);
     }
