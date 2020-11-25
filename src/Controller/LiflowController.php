@@ -90,7 +90,7 @@ class LiflowController extends AbstractController
             }
             else                      
             {
-                if ($arr[0] == "umt.imm.uran.ru")
+                if ($arr[0] == "umtnew")
                     return $this->redirectToRoute('step3', [ 'request' => $request ], 307);             //307 saves POST method instead of transforming it to GET
                     //return $this->redirectToRoute('step3', ['query' => $source_dir], [ 'request' => $request ], 307);    
                 else 
@@ -123,6 +123,7 @@ class LiflowController extends AbstractController
         $my_options = $form_data['options'];
         $my_code = $form_data['code'];
         //$my_runme = $form_data['runme'];
+        $my_cluster = "imm";              //костыль
         //$my_cluster = $form_data['cluster'];
         $my_templatename = $form_data['template_name'];
         $my_description = $form_data['description'];
@@ -130,7 +131,7 @@ class LiflowController extends AbstractController
         $my_passwd = $form_data['password'];
         //dd($form_data);
         $my_description = $service->create_description($my_description, $my_conf_file);  //добавим отмеченные строчки к описанию
-        
+    
             //Insert into database
         $experiment = new Liflowweb();
         $experiment->setDate();
@@ -154,8 +155,14 @@ class LiflowController extends AbstractController
             //Save data on disk
         $service->save_data("$target_dir", "$my_conf_file", "$my_options", "$my_code", "$my_description");
         
-            //
+            //  ./upload.py user password /var/www/html/my-project/uploads/default /home/u1224/heart/ binary_path alternate_name computational_cluster
+        $command0 = "echo `date` " . $my_user . " >> /tmp/upload.log";
+        exec($command0, $output0);
+        $command1 = "../scripts/upload.py " . $my_user . " " . $my_passwd . " /var/www/html/my-project/uploads/" . $target_dir . ' "/home/' . $my_user . "/" . $my_workdir . '" "' 
+            . $my_binary_path . '" "' . $my_templatename . '" "' . $my_cluster . '" 2>&1 | tee -a /tmp/upload.log';
+        exec($command1,$output1);    
         
+        sleep(2);
         
         //return $this->render('liflow/step3.html.twig', [
         //]);
@@ -169,6 +176,40 @@ class LiflowController extends AbstractController
             
     public function step4()
     {
+        /*
+        // sshpass -p "passwd" ssh -o StrictHostKeyChecking=no user@umt.imm.uran.ru
+        if ($my_cluster == 'imm') $command = 'sshpass -p "' . $my_passwd . '" ssh -o StrictHostKeyChecking=no ' . $my_user . '@umt.imm.uran.r
+        else $command = 'sshpass -p "' . $my_passwd . '" ssh -o StrictHostKeyChecking=no ' . $my_user . '@cluster.alexbers.com "squeue -u ' .
+        exec($command, $res);  //получаем массив строчек с результатами
+        
+        $stat='white';
+        echo "<table border='1'>";
+        foreach($res as $key=>$value){
+            echo "<tr>";
+            $pieces = preg_split('/\s+/', $res[$key]);  //разбиваем строку на кусочки
+            if($pieces[3]=='R'){
+                $stat='#82FA58';    //зеленый, выполняется
+            }
+            if($pieces[3]=='PD'){
+                $stat='yellow';     //желтый, ждет ресурсов
+            }
+            if($pieces[3]=='F'){
+                $stat='red';        //красный, завершилась с ошибкой
+            }
+            foreach($pieces as $key=>$value)
+            {
+                if($pieces[$key] !== ''){
+                    echo "<td bgcolor='$stat', align='left'>".$pieces[$key]."</td>";
+                }
+            }
+            echo "</tr>";
+        }
+        echo "</table>";
+        
+        */
+                    
+    
+    
         return $this->render('liflow/step4.html.twig', [
     
         ]);
